@@ -100,11 +100,20 @@ class DebugGame {
             this.restartGame();
         });
 
-        // Enter key in textarea
+        // Enter key in textarea + recruiter mode key blocking
         this.userFix.addEventListener('keydown', (e) => {
+            // Ctrl+Enter pour valider
             if (e.ctrlKey && e.key === 'Enter') {
                 e.preventDefault();
                 this.validateUserFix();
+                return;
+            }
+            
+            // Mode recruteur : bloquer Ctrl+V et Cmd+V
+            if (this.recruiterMode && (e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+                e.preventDefault();
+                this.playerStats.copyPasteDetected = true;
+                this.showError('🚫 Ctrl+V bloqué en mode recruteur !');
             }
         });
 
@@ -130,15 +139,6 @@ class DebugGame {
             
             // Afficher un message d'avertissement
             this.showError('🚫 Copier/coller détecté ! Cette action est interdite en mode recruteur.');
-        });
-
-        // Bloquer les raccourcis clavier de copier/coller
-        this.userFix.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
-                e.preventDefault();
-                this.playerStats.copyPasteDetected = true;
-                this.showError('🚫 Ctrl+V bloqué en mode recruteur !');
-            }
         });
 
         // Track keystroke activity
@@ -436,6 +436,15 @@ class DebugGame {
         if (this.recruiterMode) {
             this.playerStats.completed = true;
             this.playerStats.totalTime = Date.now() - this.playerStats.startTime;
+            
+            // Arrêter tous les chronomètres
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+            }
+            if (this.levelTimerInterval) {
+                clearInterval(this.levelTimerInterval);
+            }
+            
             this.showRecruiterCompletionCard();
         } else {
             // Show regular completion card
