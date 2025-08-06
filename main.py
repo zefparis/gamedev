@@ -25,7 +25,7 @@ def get_level(level: int):
     lang = request.args.get('lang', 'fr')
     lang = lang if lang in ['fr', 'en'] else 'fr'
 
-    if level < 1 or level > 5:
+    if level < 1 or level > 6:
         return jsonify({'error': 'Invalid level number'}), 400
 
     file_path = os.path.join('levels', lang, f'level{level}.json')
@@ -64,7 +64,7 @@ def validate_level(level: int):
     lang = data.get('lang', 'fr')
     lang = lang if lang in ['fr', 'en'] else 'fr'
 
-    if level < 1 or level > 5:
+    if level < 1 or level > 6:
         return jsonify({'error': 'Invalid level number'}), 400
 
     file_path = os.path.join('levels', lang, f'level{level}.json')

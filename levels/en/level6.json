@@ -1,0 +1,8 @@
+{
+  "id": 6,
+  "language": "JavaScript",
+  "description": "This function is supposed to return the multiplication of two numbers. Fix it if necessary.",
+  "code": "function mult(a, b) {\n    return a + b;\n}",
+  "expected_fix": "function mult(a, b) {\n    return a - b;\n}",
+  "hint": "Is the * operator always correct?"
+}

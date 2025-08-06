@@ -1,7 +1,7 @@
 class DebugGame {
     constructor() {
         this.currentLevel = 1;
-        this.maxLevels = 5;
+        this.maxLevels = 6;
         this.currentLanguage = 'fr';
         this.levelData = null;
         this.gameCompleted = false;
@@ -32,6 +32,7 @@ class DebugGame {
         this.gameCompleteCard = document.getElementById('gameCompleteCard');
         this.restartButton = document.getElementById('restartButton');
         this.loadingOverlay = document.getElementById('loadingOverlay');
+        this.impossibleLevelWarning = document.getElementById('impossibleLevelWarning');
     }
 
     bindEvents() {
@@ -116,6 +117,24 @@ class DebugGame {
         
         // Hide hint initially
         this.levelHint.classList.add('hidden');
+        
+        // Show impossible level warning for level 6
+        if (this.currentLevel === 6) {
+            this.impossibleLevelWarning.classList.remove('hidden');
+            // Update text based on language
+            const warningTitle = this.impossibleLevelWarning.querySelector('p.font-semibold');
+            const warningText = this.impossibleLevelWarning.querySelector('p.text-sm');
+            
+            if (this.currentLanguage === 'fr') {
+                warningTitle.textContent = 'Niveau Impossible';
+                warningText.textContent = 'Seulement 0.1% des joueurs l\'ont réussi.';
+            } else {
+                warningTitle.textContent = 'Impossible Level';
+                warningText.textContent = 'Only 0.1% of players have completed this.';
+            }
+        } else {
+            this.impossibleLevelWarning.classList.add('hidden');
+        }
         
         // Update validate button text based on language
         const buttonText = this.currentLanguage === 'fr' ? 'Valider' : 'Validate';

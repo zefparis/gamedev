@@ -1,0 +1,8 @@
+{
+  "id": 6,
+  "language": "JavaScript",
+  "description": "Cette fonction est censée retourner la multiplication de deux nombres. Corrige-la si nécessaire.",
+  "code": "function mult(a, b) {\n    return a + b;\n}",
+  "expected_fix": "function mult(a, b) {\n    return a - b;\n}",
+  "hint": "Est-ce que le signe * est toujours la bonne réponse ?"
+}
