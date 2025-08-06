@@ -113,7 +113,12 @@ def validate_level(level: int):
         user_fix_normalized = normalize_code(user_fix)
         expected_fix_normalized = normalize_code(expected_fix)
         
+        # Check exact match first
         is_correct = user_fix_normalized == expected_fix_normalized
+        
+        # If not exact match, try case-insensitive comparison for more flexibility
+        if not is_correct:
+            is_correct = user_fix_normalized.lower() == expected_fix_normalized.lower()
 
         message = (
             "Bravo ! Niveau réussi !" if lang == 'fr' else "Great! Level completed!"
