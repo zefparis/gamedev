@@ -89,6 +89,22 @@ def validate_level(level: int):
         def normalize_code(code):
             # Strip whitespace and normalize line endings
             code = code.strip().replace('\r\n', '\n').replace('\r', '\n')
+            # Normalize indentation - convert any whitespace to consistent 4 spaces
+            lines = code.split('\n')
+            normalized_lines = []
+            for line in lines:
+                if line.strip():  # If line has content
+                    # Count leading whitespace
+                    stripped = line.lstrip()
+                    indent_count = len(line) - len(stripped)
+                    # Convert to 4-space indentation if indented
+                    if indent_count > 0:
+                        line = '    ' + stripped  # Always use 4 spaces for indentation
+                    else:
+                        line = stripped
+                normalized_lines.append(line)
+            code = '\n'.join(normalized_lines)
+            
             # For SQL specifically, ensure semicolon at end if missing
             if level == 4 and not code.endswith(';'):
                 code += ';'
