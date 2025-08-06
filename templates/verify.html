@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification de Certificat - Debug Me If You Can</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="dark bg-gray-900 text-gray-100 font-mono min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-green-400 mb-2">🔐 Vérification de Certificat</h1>
+            <p class="text-gray-400">Debug Me If You Can - Mode Recruteur</p>
+        </header>
+
+        <!-- Verification Result -->
+        <div class="bg-gray-800 border-2 rounded-lg p-8 text-center">
+            {% if verified %}
+            <!-- Valid Certificate -->
+            <div class="text-green-400 mb-6">
+                <div class="text-6xl mb-4">✅</div>
+                <h2 class="text-2xl font-bold text-green-400 mb-4">Certificat Vérifié</h2>
+                <p class="text-green-100 text-lg">{{ message }}</p>
+            </div>
+
+            <!-- Certificate Details -->
+            <div class="bg-gray-700 rounded-lg p-6 mt-8">
+                <h3 class="text-xl font-semibold text-white mb-6">📋 Détails du Certificat</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div>
+                        <span class="text-gray-400 block">Candidat :</span>
+                        <span class="text-white font-semibold">{{ cert_data.name }}</span>
+                    </div>
+                    
+                    <div>
+                        <span class="text-gray-400 block">Date de certification :</span>
+                        <span class="text-white font-semibold">{{ cert_data.date[:10] }} {{ cert_data.date[11:19] }}</span>
+                    </div>
+                    
+                    <div>
+                        <span class="text-gray-400 block">Score de Logique :</span>
+                        <span class="text-green-300 font-semibold">{{ cert_data.logic_score }}/100</span>
+                    </div>
+                    
+                    <div>
+                        <span class="text-gray-400 block">Score de Vitesse :</span>
+                        <span class="text-blue-300 font-semibold">{{ cert_data.speed_score }}/100</span>
+                    </div>
+                    
+                    <div>
+                        <span class="text-gray-400 block">Temps Total :</span>
+                        <span class="text-white font-semibold">{{ (cert_data.stats.totalTime / 1000) | round }}s</span>
+                    </div>
+                    
+                    <div>
+                        <span class="text-gray-400 block">Niveaux Complétés :</span>
+                        <span class="text-white font-semibold">{{ cert_data.stats.levels | length }}/6</span>
+                    </div>
+                </div>
+
+                <!-- Performance Summary -->
+                <div class="mt-6 pt-6 border-t border-gray-600">
+                    <h4 class="text-lg font-semibold text-white mb-4">📊 Résumé de Performance</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div class="bg-gray-800 p-3 rounded">
+                            <span class="text-gray-400 block">Total Tentatives :</span>
+                            <span class="text-white font-semibold">
+                                {% set total_attempts = cert_data.stats.levels.values() | map(attribute='attempts') | sum %}
+                                {{ total_attempts }}
+                            </span>
+                        </div>
+                        <div class="bg-gray-800 p-3 rounded">
+                            <span class="text-gray-400 block">Indices Utilisés :</span>
+                            <span class="text-white font-semibold">
+                                {% set hints_used = cert_data.stats.levels.values() | selectattr('hint_used', 'equalto', true) | list | length %}
+                                {{ hints_used }}
+                            </span>
+                        </div>
+                        <div class="bg-gray-800 p-3 rounded">
+                            <span class="text-gray-400 block">Copier/Coller :</span>
+                            <span class="{% if cert_data.stats.copyPasteDetected %}text-red-300{% else %}text-green-300{% endif %} font-semibold">
+                                {% if cert_data.stats.copyPasteDetected %}Détecté{% else %}Non détecté{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Achievement -->
+                {% if '6' in cert_data.stats.levels %}
+                <div class="mt-6 pt-6 border-t border-gray-600">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4">
+                        <div class="text-white font-semibold">🧠 Mention Spéciale</div>
+                        <div class="text-purple-100 text-sm">Niveau Impossible réussi - Pensée non conventionnelle démontrée</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Hash Verification -->
+                <div class="mt-6 pt-6 border-t border-gray-600">
+                    <div class="text-left">
+                        <span class="text-gray-400 block mb-2">Hash de Vérification :</span>
+                        <code class="bg-gray-800 px-3 py-2 rounded text-xs text-green-300 break-all">{{ cert_data.hash }}</code>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- Invalid Certificate -->
+            <div class="text-red-400 mb-6">
+                <div class="text-6xl mb-4">❌</div>
+                <h2 class="text-2xl font-bold text-red-400 mb-4">Certificat Invalide</h2>
+                <p class="text-red-100 text-lg">{{ message }}</p>
+            </div>
+            
+            <div class="bg-red-900 border border-red-700 rounded-lg p-6 mt-8">
+                <p class="text-red-100">
+                    Ce certificat n'existe pas dans notre base de données ou a été falsifié.
+                    Veuillez vérifier le hash de vérification ou contacter l'émetteur du certificat.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Navigation -->
+        <div class="text-center mt-12">
+            <a href="/" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 mr-4">
+                🏠 Retour au Jeu
+            </a>
+            <a href="/recruiter-mode" class="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                🧠 Mode Recruteur
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>Debug Me If You Can - Système de certification professionnelle</p>
+            <p class="mt-2">Vérification automatique par empreinte cryptographique SHA-256</p>
+        </footer>
+    </div>
+</body>
+</html>

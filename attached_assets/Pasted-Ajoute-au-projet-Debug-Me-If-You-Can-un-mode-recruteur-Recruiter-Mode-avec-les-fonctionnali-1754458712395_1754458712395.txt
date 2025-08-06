@@ -1,0 +1,105 @@
+Ajoute au projet "Debug Me If You Can" un **mode recruteur** (Recruiter Mode™) avec les fonctionnalités suivantes :
+
+---
+
+🎮 1. Mode Recruteur activable :
+- Si le joueur accède à `/recruiter-mode` ou ajoute `?mode=recruiter` dans l’URL
+- Affiche un badge `"🧠 Recruiter Mode ON — Aucune IA autorisée"`
+
+---
+
+⏱ 2. Tracking de performance :
+- Pour chaque niveau :
+  - Temps écoulé (par niveau et total)
+  - Nombre de tentatives
+  - Si un copier/coller est détecté (`Ctrl+V`, clic droit → "paste") → flag `triche = true`
+  - Si le bouton "hint" a été cliqué → flag `hint_used = true`
+
+Stocke ces données dans un objet `playerStats` dans `game.js`, par exemple :
+
+```js
+playerStats = {
+  levels: {
+    1: { time: 63, attempts: 2, hint_used: false },
+    2: { time: 45, attempts: 1, hint_used: false },
+    ...
+  },
+  totalTime: 397,
+  copyPasteDetected: false,
+  recruiterMode: true,
+  completed: true
+}
+📄 3. Génération de certificat légal signé (PDF + JSON) :
+
+Nouvelle route Flask /certify
+
+Affiche les stats du joueur, nom/prénom, date
+
+Génére un PDF certificat-Ia-Solution.pdf avec : 
+
+Nom, date
+
+Score de logique : basé sur attempts et hints
+
+Score de vitesse : basé sur totalTime
+
+Mention spéciale si level6 réussi
+
+SHA256 hash des stats (ex : hashlib.sha256(json.dumps(playerStats).encode()).hexdigest())
+
+➡️ Le certificat est :
+
+✅ Téléchargeable
+
+✅ Sauvegardé localement dans /certs
+
+✅ Contient un lien de vérification : /verify/<hash>
+
+🔐 4. Route /verify/<hash> :
+
+Prend le hash en paramètre
+
+Cherche le fichier certs/<hash>.json
+
+Affiche les données du certificat (prénom, stats, mode utilisé)
+
+Message : "Ce certificat est vérifié et authentique" ou "Certificat introuvable"
+
+🎨 5. UI :
+
+Ajoute un écran final dédié :
+
+🏁 Félicitations, vous avez terminé le test en mode Recruteur !
+
+Bouton : "Générer mon certificat professionnel"
+
+Design sobre et premium (ex: fond sombre, police monospace, accent or ou bleu)
+
+📦 6. Dossiers/fichiers :
+
+/certs/ : stocke les .pdf et .json
+
+/templates/certify.html : page avec bouton de génération
+
+cert_generator.py (si besoin) : module Flask pour créer les PDF
+
+verify.html (facultatif) : page de vérification simple avec détails du hash
+
+📋 Résumé :
+
+Replit doit permettre de tester :
+
+Le jeu en mode normal
+
+Le mode recruteur via /recruiter-mode
+
+Le certificat complet
+
+La page de vérification
+
+Tout doit être fonctionnel, fluide et documenté dans le README.md pour GitHub et Railway.
+
+Bonus :
+
+Si triche = true, ne génère pas de certificat et affiche :
+"🚫 Comportement suspect détecté (copier/coller). Certificat refusé."

@@ -5,9 +5,24 @@ class DebugGame {
         this.currentLanguage = 'fr';
         this.levelData = null;
         this.gameCompleted = false;
+        this.recruiterMode = window.RECRUITER_MODE || false;
+        
+        // Initialize performance tracking for recruiter mode
+        this.playerStats = {
+            levels: {},
+            totalTime: 0,
+            copyPasteDetected: false,
+            recruiterMode: this.recruiterMode,
+            completed: false,
+            startTime: Date.now()
+        };
+        
+        this.levelStartTime = null;
+        this.levelAttempts = 0;
         
         this.initializeElements();
         this.bindEvents();
+        this.setupRecruiterModeTracking();
         this.loadLevel(this.currentLevel);
     }
 
@@ -33,6 +48,17 @@ class DebugGame {
         this.restartButton = document.getElementById('restartButton');
         this.loadingOverlay = document.getElementById('loadingOverlay');
         this.impossibleLevelWarning = document.getElementById('impossibleLevelWarning');
+        
+        // Recruiter mode elements
+        this.recruiterCompleteCard = document.getElementById('recruiterCompleteCard');
+        this.generateCertButton = document.getElementById('generateCertButton');
+        this.playerNameInput = document.getElementById('playerName');
+        this.cheatingWarning = document.getElementById('cheatingWarning');
+        this.recruiterRestartButton = document.getElementById('recruiterRestartButton');
+        this.finalTotalTime = document.getElementById('finalTotalTime');
+        this.finalTotalAttempts = document.getElementById('finalTotalAttempts');
+        this.finalHintsUsed = document.getElementById('finalHintsUsed');
+        this.finalCopyPaste = document.getElementById('finalCopyPaste');
     }
 
     bindEvents() {
@@ -69,6 +95,39 @@ class DebugGame {
                 this.validateUserFix();
             }
         });
+
+        // Recruiter mode events
+        if (this.recruiterMode) {
+            if (this.generateCertButton) {
+                this.generateCertButton.addEventListener('click', () => this.generateCertificate());
+            }
+            if (this.recruiterRestartButton) {
+                this.recruiterRestartButton.addEventListener('click', () => this.restartGame());
+            }
+        }
+    }
+
+    setupRecruiterModeTracking() {
+        if (!this.recruiterMode) return;
+
+        // Track copy/paste attempts
+        this.userFix.addEventListener('paste', () => {
+            this.playerStats.copyPasteDetected = true;
+            console.warn('Copy/paste detected in recruiter mode');
+        });
+
+        // Track keystroke activity
+        this.userFix.addEventListener('input', () => {
+            if (!this.playerStats.levels[this.currentLevel]) {
+                this.playerStats.levels[this.currentLevel] = {
+                    keystrokes: 0,
+                    attempts: 0,
+                    time: 0,
+                    hint_used: false
+                };
+            }
+            this.playerStats.levels[this.currentLevel].keystrokes++;
+        });
     }
 
     showLoading() {
@@ -94,6 +153,20 @@ class DebugGame {
             this.updateProgress();
             this.clearFeedback();
             this.userFix.value = '';
+            
+            // Start level timing for recruiter mode
+            if (this.recruiterMode) {
+                this.levelStartTime = Date.now();
+                this.levelAttempts = 0;
+                if (!this.playerStats.levels[level]) {
+                    this.playerStats.levels[level] = {
+                        keystrokes: 0,
+                        attempts: 0,
+                        time: 0,
+                        hint_used: false
+                    };
+                }
+            }
             
         } catch (error) {
             console.error('Error loading level:', error);
@@ -163,6 +236,11 @@ class DebugGame {
             return;
         }
 
+        // Track attempt in recruiter mode
+        if (this.recruiterMode && this.playerStats.levels[this.currentLevel]) {
+            this.playerStats.levels[this.currentLevel].attempts++;
+        }
+
         try {
             this.validateButton.disabled = true;
             this.validateButton.textContent = this.currentLanguage === 'fr' ? 'Validation...' : 'Validating...';
@@ -185,6 +263,11 @@ class DebugGame {
             const result = await response.json();
             
             if (result.correct) {
+                // Record completion time for recruiter mode
+                if (this.recruiterMode && this.levelStartTime && this.playerStats.levels[this.currentLevel]) {
+                    this.playerStats.levels[this.currentLevel].time = Date.now() - this.levelStartTime;
+                }
+                
                 this.showSuccess(result.message);
                 if (this.currentLevel < this.maxLevels) {
                     this.nextLevelButton.classList.remove('hidden');
@@ -246,6 +329,11 @@ class DebugGame {
             this.hintButton.disabled = true;
             this.hintButton.textContent = '💡';
             this.hintButton.className = 'bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg cursor-not-allowed';
+            
+            // Track hint usage in recruiter mode
+            if (this.recruiterMode && this.playerStats.levels[this.currentLevel]) {
+                this.playerStats.levels[this.currentLevel].hint_used = true;
+            }
         }
     }
 
@@ -264,31 +352,135 @@ class DebugGame {
             : `Level ${this.maxLevels}/${this.maxLevels} (100%)`;
         this.progressText.textContent = progressTextContent;
         
-        // Show completion card
-        this.gameCompleteCard.classList.remove('hidden');
-        
-        // Update completion message
-        const congratsText = this.currentLanguage === 'fr' 
-            ? '🎉 Félicitations !'
-            : '🎉 Congratulations!';
-        const completionText = this.currentLanguage === 'fr' 
-            ? 'Vous avez terminé tous les défis de débogage !'
-            : 'You\'ve completed all debugging challenges!';
-        const restartText = this.currentLanguage === 'fr' 
-            ? 'Rejouer'
-            : 'Play Again';
-        
-        this.gameCompleteCard.querySelector('h3').textContent = congratsText;
-        this.gameCompleteCard.querySelector('p').textContent = completionText;
-        this.restartButton.textContent = restartText;
+        // Complete player stats for recruiter mode
+        if (this.recruiterMode) {
+            this.playerStats.completed = true;
+            this.playerStats.totalTime = Date.now() - this.playerStats.startTime;
+            this.showRecruiterCompletionCard();
+        } else {
+            // Show regular completion card
+            this.gameCompleteCard.classList.remove('hidden');
+            
+            // Update completion message
+            const congratsText = this.currentLanguage === 'fr' 
+                ? '🎉 Félicitations !'
+                : '🎉 Congratulations!';
+            const completionText = this.currentLanguage === 'fr' 
+                ? 'Vous avez terminé tous les défis de débogage !'
+                : 'You\'ve completed all debugging challenges!';
+            const restartText = this.currentLanguage === 'fr' 
+                ? 'Rejouer'
+                : 'Play Again';
+            
+            this.gameCompleteCard.querySelector('h3').textContent = congratsText;
+            this.gameCompleteCard.querySelector('p').textContent = completionText;
+            this.restartButton.textContent = restartText;
+        }
         
         this.gameCompleted = true;
+    }
+
+    showRecruiterCompletionCard() {
+        // Hide regular completion card, show recruiter mode card
+        this.gameCompleteCard.classList.add('hidden');
+        this.recruiterCompleteCard.classList.remove('hidden');
+        
+        // Calculate and display final stats
+        const totalAttempts = Object.values(this.playerStats.levels)
+            .reduce((sum, level) => sum + (level.attempts || 0), 0);
+        const hintsUsed = Object.values(this.playerStats.levels)
+            .filter(level => level.hint_used).length;
+        
+        this.finalTotalTime.textContent = `${Math.round(this.playerStats.totalTime / 1000)}s`;
+        this.finalTotalAttempts.textContent = totalAttempts;
+        this.finalHintsUsed.textContent = hintsUsed;
+        this.finalCopyPaste.textContent = this.playerStats.copyPasteDetected ? 'Détecté' : 'Non détecté';
+        
+        // Show cheating warning if detected
+        if (this.playerStats.copyPasteDetected) {
+            this.cheatingWarning.classList.remove('hidden');
+            this.generateCertButton.disabled = true;
+            this.generateCertButton.textContent = 'Certificat Indisponible';
+        }
+    }
+
+    async generateCertificate() {
+        const playerName = this.playerNameInput.value.trim();
+        
+        if (!playerName) {
+            alert('Veuillez entrer votre nom et prénom.');
+            return;
+        }
+        
+        if (this.playerStats.copyPasteDetected) {
+            alert('Certificat non disponible : comportement suspect détecté.');
+            return;
+        }
+        
+        try {
+            this.generateCertButton.disabled = true;
+            this.generateCertButton.textContent = 'Génération...';
+            
+            const response = await fetch('/certify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: playerName,
+                    stats: this.playerStats
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                // Create download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = result.download_url;
+                downloadLink.download = `certificat-${playerName}.pdf`;
+                downloadLink.click();
+                
+                alert(`Certificat généré avec succès !\nHash de vérification : ${result.hash.substring(0, 16)}...`);
+            } else {
+                if (result.error === 'cheating_detected') {
+                    this.cheatingWarning.classList.remove('hidden');
+                    alert(result.message);
+                } else {
+                    alert('Erreur lors de la génération du certificat.');
+                }
+            }
+        } catch (error) {
+            console.error('Error generating certificate:', error);
+            alert('Erreur lors de la génération du certificat.');
+        } finally {
+            this.generateCertButton.disabled = false;
+            this.generateCertButton.textContent = 'Générer Mon Certificat Professionnel';
+        }
     }
 
     restartGame() {
         this.currentLevel = 1;
         this.gameCompleted = false;
         this.gameCompleteCard.classList.add('hidden');
+        
+        // Reset recruiter mode stats
+        if (this.recruiterMode) {
+            this.recruiterCompleteCard.classList.add('hidden');
+            this.cheatingWarning.classList.add('hidden');
+            this.playerStats = {
+                levels: {},
+                totalTime: 0,
+                copyPasteDetected: false,
+                recruiterMode: this.recruiterMode,
+                completed: false,
+                startTime: Date.now()
+            };
+            this.playerNameInput.value = '';
+            this.generateCertButton.disabled = false;
+            this.generateCertButton.textContent = 'Générer Mon Certificat Professionnel';
+        }
+        
         this.loadLevel(this.currentLevel);
     }
 }

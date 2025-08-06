@@ -1,7 +1,8 @@
 import os
 import json
 import logging
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for, send_file
+from cert_generator import CertificateGenerator
 
 # 🪵 Logging configuration
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
@@ -10,6 +11,9 @@ logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "debug-me-if-you-can-secret-key")
 
+# Initialize certificate generator
+cert_generator = CertificateGenerator()
+
 # 🔧 Normalize code for comparison (trim, flatten spaces, remove \n)
 def normalize(code: str) -> str:
     return ' '.join(code.strip().split())
@@ -17,7 +21,13 @@ def normalize(code: str) -> str:
 # 🧩 Route principale — page du jeu
 @app.route('/')
 def index():
-    return render_template('index.html')
+    recruiter_mode = request.args.get('mode') == 'recruiter'
+    return render_template('index.html', recruiter_mode=recruiter_mode)
+
+# 🧠 Route pour le mode recruteur
+@app.route('/recruiter-mode')
+def recruiter_mode():
+    return redirect(url_for('index', mode='recruiter'))
 
 # 📥 API : Chargement d’un niveau
 @app.route('/api/level/<int:level>')
@@ -109,6 +119,83 @@ def validate_level(level: int):
     except Exception as e:
         logging.exception(f"Error while validating level {level}")
         return jsonify({'error': 'Internal server error'}), 500
+
+# 📄 Route de certification
+@app.route('/certify', methods=['GET', 'POST'])
+def certify():
+    if request.method == 'POST':
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        player_name = data.get('name', '').strip()
+        player_stats = data.get('stats', {})
+        
+        if not player_name:
+            return jsonify({'error': 'Name is required'}), 400
+        
+        if not player_stats or not player_stats.get('recruiterMode'):
+            return jsonify({'error': 'Invalid stats or not in recruiter mode'}), 400
+        
+        # Check for cheating
+        if player_stats.get('copyPasteDetected', False):
+            return jsonify({
+                'error': 'cheating_detected',
+                'message': '🚫 Comportement suspect détecté (copier/coller). Certificat refusé.'
+            }), 400
+        
+        try:
+            cert_hash, pdf_path = cert_generator.generate_certificate(player_name, player_stats)
+            
+            return jsonify({
+                'success': True,
+                'hash': cert_hash,
+                'download_url': f'/download/{cert_hash}',
+                'verify_url': f'/verify/{cert_hash}'
+            })
+        
+        except Exception as e:
+            logging.exception("Error generating certificate")
+            return jsonify({'error': 'Certificate generation failed'}), 500
+    
+    return render_template('certify.html')
+
+# 📥 Route de téléchargement du certificat
+@app.route('/download/<cert_hash>')
+def download_certificate(cert_hash):
+    try:
+        cert_data = cert_generator.verify_certificate(cert_hash)
+        if not cert_data:
+            return "Certificat introuvable", 404
+        
+        # Find PDF file with this hash
+        for filename in os.listdir('certs'):
+            if filename.startswith('certificat-') and cert_hash[:8] in filename and filename.endswith('.pdf'):
+                pdf_path = os.path.join('certs', filename)
+                return send_file(pdf_path, as_attachment=True, 
+                               download_name=f"certificat-{cert_data['name']}-{cert_hash[:8]}.pdf")
+        
+        return "Fichier PDF introuvable", 404
+    
+    except Exception as e:
+        logging.exception("Error downloading certificate")
+        return "Erreur lors du téléchargement", 500
+
+# 🔐 Route de vérification
+@app.route('/verify/<cert_hash>')
+def verify_certificate(cert_hash):
+    cert_data = cert_generator.verify_certificate(cert_hash)
+    
+    if not cert_data:
+        return render_template('verify.html', 
+                             verified=False, 
+                             message="Certificat introuvable ou invalide")
+    
+    return render_template('verify.html', 
+                         verified=True, 
+                         cert_data=cert_data,
+                         message="Ce certificat est vérifié et authentique")
 
 # 🟢 Démarrage local ou Railway
 if __name__ == '__main__':

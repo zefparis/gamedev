@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certification Professionnelle - Debug Me If You Can</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="dark bg-gray-900 text-gray-100 font-mono min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-yellow-400 mb-2">🎓 Certification Professionnelle</h1>
+            <p class="text-gray-400">Debug Me If You Can - Mode Recruteur</p>
+        </header>
+
+        <!-- Instructions -->
+        <div class="bg-yellow-900 border border-yellow-700 rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-yellow-100 mb-4">📋 Instructions pour la Certification</h2>
+            <div class="text-yellow-200 space-y-3">
+                <p>• Completez tous les 6 niveaux de débogage en <strong>mode recruteur</strong></p>
+                <p>• Aucune assistance d'intelligence artificielle n'est autorisée</p>
+                <p>• Le copier/coller est surveillé et empêche la certification</p>
+                <p>• Votre performance est mesurée: vitesse, logique, et utilisation d'indices</p>
+                <p>• Un certificat PDF vérifiable sera généré à la fin</p>
+            </div>
+        </div>
+
+        <!-- Start Test Button -->
+        <div class="text-center mb-12">
+            <a href="/recruiter-mode" class="bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-4 px-8 rounded-lg text-xl transition-colors duration-200 inline-block">
+                🚀 Commencer le Test en Mode Recruteur
+            </a>
+        </div>
+
+        <!-- Features -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-green-400 mb-3">🎯 Évaluation de Performance</h3>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                    <li>• Score de logique basé sur les tentatives</li>
+                    <li>• Score de vitesse basé sur le temps</li>
+                    <li>• Suivi des indices utilisés</li>
+                    <li>• Détection de comportements suspects</li>
+                </ul>
+            </div>
+
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-blue-400 mb-3">🔐 Certificat Vérifiable</h3>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                    <li>• PDF professionnel avec QR code</li>
+                    <li>• Hash de vérification SHA-256</li>
+                    <li>• URL de vérification publique</li>
+                    <li>• Horodatage cryptographique</li>
+                </ul>
+            </div>
+
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-purple-400 mb-3">🧠 Niveaux de Difficulté</h3>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                    <li>• HTML/CSS: Correction de structure</li>
+                    <li>• JavaScript: Logique et syntaxe</li>
+                    <li>• Python: Algorithmes et types</li>
+                    <li>• SQL: Requêtes et jointures</li>
+                    <li>• Regex: Expressions régulières</li>
+                    <li>• Impossible: Pensée non conventionnelle</li>
+                </ul>
+            </div>
+
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-red-400 mb-3">⚠️ Règles Strictes</h3>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                    <li>• Pas d'IA (ChatGPT, Copilot, etc.)</li>
+                    <li>• Pas de copier/coller externe</li>
+                    <li>• Une seule session par candidat</li>
+                    <li>• Surveillance en temps réel</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Certificate Verification -->
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-8">
+            <h3 class="text-lg font-semibold text-green-400 mb-4">🔍 Vérifier un Certificat Existant</h3>
+            <div class="flex gap-4">
+                <input 
+                    type="text" 
+                    id="certHash" 
+                    placeholder="Entrez le hash de vérification..."
+                    class="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                <button 
+                    onclick="verifyCertificate()"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+                >
+                    Vérifier
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="text-center">
+            <a href="/" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                🏠 Retour au Jeu Normal
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>Système de certification professionnelle pour développeurs</p>
+            <p class="mt-2">Conçu pour l'évaluation objective des compétences en débogage</p>
+        </footer>
+    </div>
+
+    <script>
+        function verifyCertificate() {
+            const hash = document.getElementById('certHash').value.trim();
+            if (!hash) {
+                alert('Veuillez entrer un hash de vérification.');
+                return;
+            }
+            window.open(`/verify/${hash}`, '_blank');
+        }
+
+        // Allow Enter key to verify
+        document.getElementById('certHash').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                verifyCertificate();
+            }
+        });
+    </script>
+</body>
+</html>
