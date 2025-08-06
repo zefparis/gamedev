@@ -1,0 +1,59 @@
+Créer une application Flask nommée **Debug Me If You Can** avec l'architecture suivante :
+
+📁 Structure :
+- `main.py` : application Flask principale
+- `/levels/fr/level1.json` à `level5.json` : niveaux en français
+- `/levels/en/level1.json` à `level5.json` : niveaux en anglais
+- `/templates/index.html` : page principale
+- `/static/js/game.js` : logique JS pour le jeu
+- `/static/css/tailwind.css` : style en dark mode
+- `requirements.txt` : dépendances
+
+🎮 Fonctionnalités du jeu :
+- 5 niveaux progressifs (HTML, JS, Python, SQL, Regex)
+- Chaque niveau affiche :
+  - un code buggé
+  - une consigne
+  - un champ pour soumettre la correction
+  - un bouton "Valider"
+- Si la réponse correspond à la bonne (définie dans les fichiers JSON), un message "Bravo" s'affiche et passe au niveau suivant.
+- Sinon : "Erreur, recommence !"
+- Affichage du niveau en cours et progression (%)
+- Stockage des niveaux dans des fichiers JSON, pas de base de données
+- Sélecteur de langue (Français / Anglais) en haut à droite
+
+🌍 Internationalisation :
+- Si la langue choisie est `fr`, charger les fichiers dans `/levels/fr/`
+- Si `en`, charger les fichiers dans `/levels/en/`
+
+🎨 Design :
+- Utiliser Tailwind CSS (CDN) pour un design moderne et responsive
+- Dark mode par défaut
+- Police monospace (JetBrains Mono ou Fira Code)
+- Effet terminal pour l’affichage du code
+- Composants stylisés (cards, boutons, inputs, barre de progression)
+
+🖥️ Backend :
+- Flask route `/` : rend `index.html`
+- Flask route `/api/level/<int:level>?lang=fr|en` : retourne les données du niveau en JSON (description, code buggé, réponse attendue)
+- Pas de système utilisateur, pas de base de données
+
+✅ Déploiement :
+- Application compatible Railway
+- Port dynamique (`os.environ.get("PORT", 5000)`)
+- Ajouter un `Procfile` contenant : `web: python3 main.py`
+
+📝 README :
+- Ajoute un fichier README.md avec un titre, une description, instructions de lancement local et déploiement Railway.
+
+📦 Exemple de données pour level1.json (fr) :
+```json
+{
+  "id": 1,
+  "language": "HTML",
+  "description": "Une balise est mal fermée",
+  "code": "<div><p>Bienvenue",
+  "expected_fix": "<div><p>Bienvenue</p></div>",
+  "hint": "Regarde la balise <p> !"
+}
+Fais en sorte que tout le projet soit modulaire, propre, facile à modifier, prêt à être commit et push sur GitHub (zefparis/gamedev.git) pour déploiement Railway.
