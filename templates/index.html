@@ -100,7 +100,13 @@
         <div class="mb-8">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm text-gray-400">Progress</span>
-                <span id="progressText" class="text-sm text-gray-400">Level 1/6 (0%)</span>
+                <div class="flex items-center space-x-4">
+                    <span id="progressText" class="text-sm text-gray-400">Level 1/6 (0%)</span>
+                    <!-- Level Timer (only show in recruiter mode) -->
+                    {% if recruiter_mode %}
+                    <span id="levelTimer" class="text-sm text-yellow-400 bg-yellow-900 px-2 py-1 rounded">⏱️ 00:00</span>
+                    {% endif %}
+                </div>
             </div>
             <div class="w-full bg-gray-800 rounded-full h-3">
                 <div id="progressBar" class="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>

@@ -122,10 +122,23 @@ class DebugGame {
     setupRecruiterModeTracking() {
         if (!this.recruiterMode) return;
 
-        // Track copy/paste attempts
-        this.userFix.addEventListener('paste', () => {
+        // Track and PREVENT copy/paste attempts
+        this.userFix.addEventListener('paste', (e) => {
+            e.preventDefault(); // Empêcher le collage
             this.playerStats.copyPasteDetected = true;
             console.warn('Copy/paste detected in recruiter mode');
+            
+            // Afficher un message d'avertissement
+            this.showError('🚫 Copier/coller détecté ! Cette action est interdite en mode recruteur.');
+        });
+
+        // Bloquer les raccourcis clavier de copier/coller
+        this.userFix.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+                e.preventDefault();
+                this.playerStats.copyPasteDetected = true;
+                this.showError('🚫 Ctrl+V bloqué en mode recruteur !');
+            }
         });
 
         // Track keystroke activity
@@ -140,6 +153,53 @@ class DebugGame {
             }
             this.playerStats.levels[this.currentLevel].keystrokes++;
         });
+
+        // Démarrer le chronomètre global
+        this.startGlobalTimer();
+    }
+
+    startGlobalTimer() {
+        if (!this.recruiterMode) return;
+
+        // Créer l'affichage du chronomètre s'il n'existe pas
+        if (!document.getElementById('globalTimer')) {
+            const timerDiv = document.createElement('div');
+            timerDiv.id = 'globalTimer';
+            timerDiv.className = 'fixed top-4 right-4 bg-yellow-600 text-black px-4 py-2 rounded-lg font-mono font-bold shadow-lg z-50';
+            timerDiv.innerHTML = '⏱️ 00:00';
+            document.body.appendChild(timerDiv);
+        }
+
+        // Mettre à jour le chronomètre toutes les secondes
+        this.timerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - this.playerStats.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timerElement = document.getElementById('globalTimer');
+            if (timerElement) {
+                timerElement.innerHTML = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
+    }
+
+    startLevelTimer() {
+        if (!this.recruiterMode || !this.levelStartTime) return;
+
+        // Arrêter le chronomètre précédent s'il existe
+        if (this.levelTimerInterval) {
+            clearInterval(this.levelTimerInterval);
+        }
+
+        // Démarrer le nouveau chronomètre du niveau
+        this.levelTimerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - this.levelStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const levelTimerElement = document.getElementById('levelTimer');
+            if (levelTimerElement) {
+                levelTimerElement.innerHTML = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
     }
 
     showLoading() {
@@ -178,6 +238,9 @@ class DebugGame {
                         hint_used: false
                     };
                 }
+                
+                // Démarrer le chronomètre du niveau
+                this.startLevelTimer();
             }
             
         } catch (error) {
@@ -278,6 +341,11 @@ class DebugGame {
                 // Record completion time for recruiter mode
                 if (this.recruiterMode && this.levelStartTime && this.playerStats.levels[this.currentLevel]) {
                     this.playerStats.levels[this.currentLevel].time = Date.now() - this.levelStartTime;
+                    
+                    // Arrêter le chronomètre du niveau
+                    if (this.levelTimerInterval) {
+                        clearInterval(this.levelTimerInterval);
+                    }
                 }
                 
                 this.showSuccess(result.message);
@@ -491,6 +559,15 @@ class DebugGame {
             this.playerNameInput.value = '';
             this.generateCertButton.disabled = false;
             this.generateCertButton.textContent = 'Générer Mon Certificat Professionnel';
+            
+            // Redémarrer les chronomètres
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+            }
+            if (this.levelTimerInterval) {
+                clearInterval(this.levelTimerInterval);
+            }
+            this.startGlobalTimer();
         }
         
         this.loadLevel(this.currentLevel);
