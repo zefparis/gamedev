@@ -1,0 +1,53 @@
+{
+  "name": "BARRERE Benjamin",
+  "date": "2025-08-06T06:50:11.832391",
+  "stats": {
+    "levels": {
+      "1": {
+        "keystrokes": 60,
+        "attempts": 1,
+        "time": 133650,
+        "hint_used": false
+      },
+      "2": {
+        "keystrokes": 45,
+        "attempts": 1,
+        "time": 48515,
+        "hint_used": false
+      },
+      "3": {
+        "keystrokes": 65,
+        "attempts": 2,
+        "time": 125479,
+        "hint_used": false
+      },
+      "4": {
+        "keystrokes": 81,
+        "attempts": 1,
+        "time": 75618,
+        "hint_used": false
+      },
+      "5": {
+        "keystrokes": 50,
+        "attempts": 2,
+        "time": 137602,
+        "hint_used": false
+      },
+      "6": {
+        "keystrokes": 47,
+        "attempts": 2,
+        "time": 136983,
+        "hint_used": false
+      }
+    },
+    "totalTime": 666578,
+    "copyPasteDetected": false,
+    "recruiterMode": true,
+    "completed": true,
+    "startTime": 1754462323770
+  },
+  "logic_score": 70,
+  "speed_score": 0,
+  "hash": "6ad054ec9117932dd28e571ca70ee198930b06896b58be0a0bfc0d3ab3004119",
+  "verified": true
+}

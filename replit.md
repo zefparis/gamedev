@@ -2,6 +2,12 @@
 
 Debug Me If You Can is a progressive debugging game built with Flask that challenges developers to fix common programming errors across 6 levels covering HTML, JavaScript, Python, SQL, Regex, and an "Impossible" level. The application features bilingual support (French/English), dark mode terminal-style interface, progress tracking, instant feedback validation, and a special challenge level designed to test unconventional thinking.
 
+## Recent Updates (August 2025)
+- **Recruiter Mode Enhancements**: Implemented comprehensive anti-cheating system with copy-paste prevention, real-time performance tracking, and dual timer system (global + per-level)
+- **Validation Improvements**: Enhanced code validation to be more flexible with indentation (3/4 spaces, tabs) and case sensitivity while maintaining accuracy
+- **Certificate Generation**: Added professional PDF certificate system with verification hashes for recruitment assessment
+- **User Experience**: Fixed interface loading issues, improved error handling, and added visual countdown timers
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -28,6 +34,15 @@ Preferred communication style: Simple, everyday language.
 - **Data Schema**: Each level contains id, language, description, code, expected_fix, and hint fields
 - **Special Features**: Level 6 is an "impossible" challenge with intentionally misleading expected solutions to test unconventional thinking
 - **Security**: Expected fixes are filtered out from API responses to prevent cheating
+- **Validation**: Enhanced normalization for indentation (3/4 spaces, tabs) and case-insensitive comparison for better user experience
+
+## Recruiter Mode Features
+- **Anti-Cheating System**: Complete copy-paste prevention with keyboard shortcut blocking (Ctrl+V, Cmd+V)
+- **Performance Tracking**: Real-time monitoring of keystrokes, attempts, time per level, and hint usage
+- **Timer System**: Dual countdown display (global test timer + individual level timer)
+- **Certificate Generation**: Professional PDF certificates with SHA-256 verification hashes
+- **Security Measures**: Automatic certificate disabling when cheating is detected
+- **User Interface**: Prominent mode selector and performance badges with real-time feedback
 
 ## Internationalization
 - **Languages**: French (default) and English
