@@ -75,8 +75,19 @@ def validate_level(level: int):
 
         expected_fix = level_data.get('expected_fix', '')
 
-        # Compare user fix with expected fix (trim whitespace)
-        is_correct = user_fix.strip() == expected_fix.strip()
+        # Compare user fix with expected fix (normalize whitespace and handle common variations)
+        def normalize_code(code):
+            # Strip whitespace and normalize line endings
+            code = code.strip().replace('\r\n', '\n').replace('\r', '\n')
+            # For SQL specifically, ensure semicolon at end if missing
+            if level == 4 and not code.endswith(';'):
+                code += ';'
+            return code
+        
+        user_fix_normalized = normalize_code(user_fix)
+        expected_fix_normalized = normalize_code(expected_fix)
+        
+        is_correct = user_fix_normalized == expected_fix_normalized
 
         message = (
             "Bravo ! Niveau réussi !" if lang == 'fr' else "Great! Level completed!"
