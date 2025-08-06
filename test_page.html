@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="/static/css/style.css">
     
     <!-- Tailwind Dark Mode Configuration -->
     <script>
@@ -39,68 +39,24 @@
                 <p class="text-gray-400">Progressive debugging challenges for developers</p>
                 
                 <!-- Recruiter Mode Badge -->
-                {% if recruiter_mode %}
-                <div class="mt-3 inline-flex items-center px-4 py-2 bg-yellow-900 border border-yellow-700 rounded-lg">
-                    <span class="text-yellow-200 font-semibold">🧠 Recruiter Mode ON — Aucune IA autorisée</span>
-                </div>
-                {% endif %}
+                
             </div>
             
-            <!-- Controls -->
+            <!-- Language Selector -->
             <div class="flex items-center space-x-4">
-                <!-- Language Selector -->
-                <div class="flex items-center space-x-2">
-                    <span class="text-gray-400">Language:</span>
-                    <select id="languageSelector" class="bg-gray-800 border border-gray-700 text-white px-3 py-2 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                        <option value="fr">Français</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-                
-                <!-- Recruiter Mode Button (only show if not already in recruiter mode) -->
-                {% if not recruiter_mode %}
-                <a href="/recruiter-mode" class="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center space-x-2">
-                    <span>🎓</span>
-                    <span>Mode Recruteur</span>
-                </a>
-                {% else %}
-                <a href="/" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center space-x-2">
-                    <span>🏠</span>
-                    <span>Mode Normal</span>
-                </a>
-                {% endif %}
+                <span class="text-gray-400">Language:</span>
+                <select id="languageSelector" class="bg-gray-800 border border-gray-700 text-white px-3 py-2 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
             </div>
         </header>
-
-        <!-- Recruiter Mode Info (only show if not in recruiter mode) -->
-        {% if not recruiter_mode %}
-        <div class="bg-gradient-to-r from-yellow-900 to-orange-900 border border-yellow-700 rounded-lg p-6 mb-8">
-            <div class="flex items-start space-x-4">
-                <div class="text-4xl">🎓</div>
-                <div class="flex-1">
-                    <h3 class="text-xl font-bold text-yellow-100 mb-2">Mode Recruteur - Certification Professionnelle</h3>
-                    <p class="text-yellow-200 mb-4">
-                        Obtenez un certificat officiel vérifié en terminant tous les niveaux sans assistance d'IA. 
-                        Performance suivie en temps réel : vitesse, logique, et tentatives.
-                    </p>
-                    <div class="flex flex-wrap gap-3">
-                        <a href="/recruiter-mode" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
-                            🚀 Commencer le Test
-                        </a>
-                        <a href="/certify" class="bg-yellow-700 hover:bg-yellow-800 text-yellow-100 font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
-                            📋 En savoir plus
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
 
         <!-- Progress Bar -->
         <div class="mb-8">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm text-gray-400">Progress</span>
-                <span id="progressText" class="text-sm text-gray-400">Level 1/6 (0%)</span>
+                <span id="progressText" class="text-sm text-gray-400">Level 1/5 (0%)</span>
             </div>
             <div class="w-full bg-gray-800 rounded-full h-3">
                 <div id="progressBar" class="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
@@ -273,10 +229,10 @@
 
     <!-- Pass recruiter mode to JavaScript -->
     <script>
-        window.RECRUITER_MODE = {{ 'true' if recruiter_mode else 'false' }};
+        window.RECRUITER_MODE = false;
     </script>
     
     <!-- Game JavaScript -->
-    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script src="/static/js/game.js"></script>
 </body>
 </html>

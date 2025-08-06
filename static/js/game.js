@@ -20,7 +20,12 @@ class DebugGame {
         this.levelStartTime = null;
         this.levelAttempts = 0;
         
-        this.initializeElements();
+        // Initialiser les éléments et vérifier que tout est ok
+        if (!this.initializeElements()) {
+            console.error('Impossible d\'initialiser les éléments HTML');
+            return;
+        }
+        
         this.bindEvents();
         this.setupRecruiterModeTracking();
         this.loadLevel(this.currentLevel);
@@ -49,7 +54,7 @@ class DebugGame {
         this.loadingOverlay = document.getElementById('loadingOverlay');
         this.impossibleLevelWarning = document.getElementById('impossibleLevelWarning');
         
-        // Recruiter mode elements
+        // Recruiter mode elements (ces éléments peuvent être null si pas en mode recruteur)
         this.recruiterCompleteCard = document.getElementById('recruiterCompleteCard');
         this.generateCertButton = document.getElementById('generateCertButton');
         this.playerNameInput = document.getElementById('playerName');
@@ -59,6 +64,13 @@ class DebugGame {
         this.finalTotalAttempts = document.getElementById('finalTotalAttempts');
         this.finalHintsUsed = document.getElementById('finalHintsUsed');
         this.finalCopyPaste = document.getElementById('finalCopyPaste');
+
+        // Vérifier les éléments essentiels
+        if (!this.levelTitle || !this.buggyCode || !this.userFix) {
+            console.error('Éléments HTML essentiels manquants');
+            return false;
+        }
+        return true;
     }
 
     bindEvents() {
