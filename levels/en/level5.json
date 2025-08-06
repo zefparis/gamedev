@@ -1,0 +1,8 @@
+{
+  "id": 5,
+  "language": "Regex",
+  "description": "This regular expression for validating an email address is incorrect. Fix it so it works properly.",
+  "code": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z{2,}$",
+  "expected_fix": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+  "hint": "Look carefully at the braces and brackets. There's an error in the character range definition!"
+}

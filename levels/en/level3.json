@@ -1,0 +1,8 @@
+{
+  "id": 3,
+  "language": "Python",
+  "description": "This Python code has an indentation problem that causes an error. Fix the code structure.",
+  "code": "def greet(name):\nprint(f\"Hello {name}!\")\nreturn True",
+  "expected_fix": "def greet(name):\n    print(f\"Hello {name}!\")\n    return True",
+  "hint": "Python uses indentation to define code blocks. All lines in a function must be indented!"
+}

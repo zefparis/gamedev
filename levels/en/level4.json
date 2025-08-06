@@ -1,0 +1,8 @@
+{
+  "id": 4,
+  "language": "SQL",
+  "description": "This SQL query contains a syntax error. Find and fix the problem so it works correctly.",
+  "code": "SELECT name, age FROM users WHERE age > 18 AND name LIKE '%smith%",
+  "expected_fix": "SELECT name, age FROM users WHERE age > 18 AND name LIKE '%smith%';",
+  "hint": "Look at the end of the query. Something important is missing to terminate an SQL statement!"
+}

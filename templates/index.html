@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Me If You Can</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- JetBrains Mono Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Tailwind Dark Mode Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="dark bg-gray-900 text-gray-100 font-mono min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-4xl font-bold text-green-400 mb-2">Debug Me If You Can</h1>
+                <p class="text-gray-400">Progressive debugging challenges for developers</p>
+            </div>
+            
+            <!-- Language Selector -->
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-400">Language:</span>
+                <select id="languageSelector" class="bg-gray-800 border border-gray-700 text-white px-3 py-2 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-gray-400">Progress</span>
+                <span id="progressText" class="text-sm text-gray-400">Level 1/5 (0%)</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-3">
+                <div id="progressBar" class="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Left Column: Level Info and Code -->
+            <div class="space-y-6">
+                <!-- Level Info Card -->
+                <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 id="levelTitle" class="text-xl font-semibold text-green-400">Loading...</h2>
+                        <span id="levelLanguage" class="px-3 py-1 bg-blue-600 text-blue-100 rounded-full text-sm"></span>
+                    </div>
+                    <p id="levelDescription" class="text-gray-300 leading-relaxed">Loading level description...</p>
+                    <div id="levelHint" class="mt-4 p-3 bg-yellow-900 border border-yellow-700 rounded-lg text-yellow-200 hidden">
+                        <span class="font-semibold">💡 Hint: </span>
+                        <span id="hintText"></span>
+                    </div>
+                </div>
+
+                <!-- Code Display -->
+                <div class="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
+                    <div class="bg-gray-800 px-4 py-2 border-b border-gray-700">
+                        <h3 class="text-sm font-semibold text-gray-300">🐛 Buggy Code</h3>
+                    </div>
+                    <div class="p-4">
+                        <pre id="buggyCode" class="text-green-300 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap">Loading code...</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Solution Input -->
+            <div class="space-y-6">
+                <!-- Solution Input Card -->
+                <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-green-400 mb-4">🔧 Your Fix</h3>
+                    <div class="space-y-4">
+                        <textarea 
+                            id="userFix" 
+                            class="w-full h-48 bg-gray-900 border border-gray-700 rounded-lg p-4 text-green-300 text-sm font-mono resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Enter your corrected code here..."
+                            spellcheck="false"
+                        ></textarea>
+                        
+                        <div class="flex space-x-3">
+                            <button 
+                                id="validateButton" 
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                            >
+                                Validate
+                            </button>
+                            <button 
+                                id="hintButton" 
+                                class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                            >
+                                💡
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Card -->
+                <div id="feedbackCard" class="bg-gray-800 border border-gray-700 rounded-lg p-6 hidden">
+                    <div id="feedbackContent" class="flex items-center space-x-3">
+                        <span id="feedbackIcon" class="text-2xl"></span>
+                        <span id="feedbackMessage" class="font-semibold"></span>
+                    </div>
+                    <button 
+                        id="nextLevelButton" 
+                        class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 hidden"
+                    >
+                        Next Level →
+                    </button>
+                </div>
+
+                <!-- Game Complete Card -->
+                <div id="gameCompleteCard" class="bg-gradient-to-r from-green-600 to-blue-600 rounded-lg p-6 hidden text-center">
+                    <h3 class="text-2xl font-bold text-white mb-2">🎉 Congratulations!</h3>
+                    <p class="text-green-100 mb-4">You've completed all debugging challenges!</p>
+                    <button 
+                        id="restartButton" 
+                        class="bg-white text-green-600 font-semibold py-2 px-6 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                    >
+                        Play Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-8 text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+                <p class="text-gray-300">Loading challenge...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game JavaScript -->
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

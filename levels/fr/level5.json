@@ -1,0 +1,8 @@
+{
+  "id": 5,
+  "language": "Regex",
+  "description": "Cette expression régulière pour valider une adresse email est incorrecte. Corrigez-la pour qu'elle fonctionne proprement.",
+  "code": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z{2,}$",
+  "expected_fix": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+  "hint": "Regardez attentivement les accolades et crochets. Il y a une erreur dans la définition de la plage de caractères !"
+}

@@ -1,0 +1,8 @@
+{
+  "id": 2,
+  "language": "JavaScript",
+  "description": "Cette fonction JavaScript contient une erreur de syntaxe qui empêche son exécution. Corrigez le problème.",
+  "code": "function calculer(a, b) {\n    return a + b\n}",
+  "expected_fix": "function calculer(a, b) {\n    return a + b;\n}",
+  "hint": "Il manque quelque chose à la fin de l'instruction return. Pensez à la ponctuation !"
+}

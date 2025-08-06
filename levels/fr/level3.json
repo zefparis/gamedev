@@ -1,0 +1,8 @@
+{
+  "id": 3,
+  "language": "Python",
+  "description": "Ce code Python a un problème d'indentation qui provoque une erreur. Corrigez la structure du code.",
+  "code": "def saluer(nom):\nprint(f\"Bonjour {nom}!\")\nreturn True",
+  "expected_fix": "def saluer(nom):\n    print(f\"Bonjour {nom}!\")\n    return True",
+  "hint": "Python utilise l'indentation pour définir les blocs de code. Toutes les lignes d'une fonction doivent être indentées !"
+}

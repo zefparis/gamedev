@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "language": "HTML",
+  "description": "Une balise est mal fermée dans ce code HTML. Trouvez et corrigez l'erreur pour que la structure soit valide.",
+  "code": "<div><p>Bienvenue dans le défi de débogage !",
+  "expected_fix": "<div><p>Bienvenue dans le défi de débogage !</p></div>",
+  "hint": "Regardez attentivement les balises <p> et <div>. Il manque des balises de fermeture !"
+}

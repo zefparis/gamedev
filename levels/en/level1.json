@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "language": "HTML",
+  "description": "A tag is not properly closed in this HTML code. Find and fix the error to make the structure valid.",
+  "code": "<div><p>Welcome to the debugging challenge!",
+  "expected_fix": "<div><p>Welcome to the debugging challenge!</p></div>",
+  "hint": "Look carefully at the <p> and <div> tags. Some closing tags are missing!"
+}
